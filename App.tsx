@@ -8,6 +8,7 @@ import { COLORS } from './src/theme/theme';
 import { FirebaseProvider, useFirebase } from './src/contexts/FirebaseContext';
 import { SafeAreaView } from 'react-native';
 import { ThemeProvider } from './src/theme/theme';
+import { AIProvider } from './src/contexts/AIContext';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,12 +35,14 @@ const Navigation = () => {
 export default function App() {
   return (
     <ThemeProvider>
-      <FirebaseProvider>
+    <FirebaseProvider>    
+      <AIProvider>
         <SafeAreaView style={{ flex: 1, paddingTop: 20 }}>
           <StatusBar style="light" backgroundColor={COLORS.background} />
           <Navigation />
         </SafeAreaView>
+         </AIProvider>
       </FirebaseProvider>
-    </ThemeProvider>
+      </ThemeProvider>
   );
 }

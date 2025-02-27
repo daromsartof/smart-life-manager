@@ -83,6 +83,10 @@ const HabitsScreen = () => {
   };
 
   const handleCheckIn = async (habit: Habit, event: GestureResponderEvent) => {
+    // Capture coordinates immediately
+    const pageX = event.nativeEvent.pageX;
+    const pageY = event.nativeEvent.pageY;
+    
     try {
       const now = new Date();
       const lastChecked = habit.lastChecked ? new Date(habit.lastChecked) : null;
@@ -101,8 +105,7 @@ const HabitsScreen = () => {
           lastChecked: now,
         });
         
-        // Trigger confetti
-        const { pageX, pageY } = event.nativeEvent;
+        // Use captured coordinates
         setConfettiPosition({ x: pageX, y: pageY });
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 2000);

@@ -16,7 +16,10 @@ import {
   where,
   getDocs,
 } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth, db } from '../config/firebase';
+
+const AUTH_USER_KEY = '@auth_user';
 
 interface FirebaseContextType {
   user: User | null;
@@ -48,25 +51,70 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Load stored user on mount
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const loadStoredUser = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem(AUTH_USER_KEY);
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (error) {
+        console.error('Error loading stored user:', error);
+      }
+    };
+
+    loadStoredUser();
+  }, []);
+
+  // Listen to auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
       setLoading(false);
+
+      try {
+        if (currentUser) {
+          // Store user data when signed in
+          await AsyncStorage.setItem(AUTH_USER_KEY, JSON.stringify(currentUser));
+        } else {
+          // Remove stored user data when signed out
+          await AsyncStorage.removeItem(AUTH_USER_KEY);
+        }
+      } catch (error) {
+        console.error('Error storing auth state:', error);
+      }
     });
 
     return unsubscribe;
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    try {
+      await AsyncStorage.setItem(AUTH_USER_KEY, JSON.stringify(userCredential.user));
+    } catch (error) {
+      console.error('Error storing user data:', error);
+    }
   };
 
   const signUp = async (email: string, password: string) => {
-    await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    try {
+      await AsyncStorage.setItem(AUTH_USER_KEY, JSON.stringify(userCredential.user));
+    } catch (error) {
+      console.error('Error storing user data:', error);
+    }
   };
 
-  const logout = async () => {
-    await firebaseSignOut(auth);
+  const signOut = async () => {
+    try {
+      await firebaseSignOut(auth);
+      await AsyncStorage.removeItem(AUTH_USER_KEY);
+    } catch (error) {
+      console.error('Error signing out:', error);
+      throw error;
+    }
   };
 
   const addTask = async (task: any) => {
@@ -115,15 +163,6 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const q = query(collection(db, 'habits'), where('userId', '==', user.uid));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  };
-
-  const signOut = async () => {
-    try {
-      await firebaseSignOut(auth);
-    } catch (error) {
-      console.error('Error signing out:', error);
-      throw error;
-    }
   };
 
   const value: FirebaseContextType = {

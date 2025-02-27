@@ -68,12 +68,15 @@ const HomeScreen = () => {
   };
 
   const handleToggleTask = async (taskId: string, completed: boolean, event: GestureResponderEvent) => {
+    // Capture coordinates immediately
+    const pageX = event.nativeEvent.pageX;
+    const pageY = event.nativeEvent.pageY;
+    
     try {
       await updateTask(taskId, { completed: !completed });
       
       // Show confetti when completing a task
       if (!completed) {
-        const { pageX, pageY } = event.nativeEvent;
         setConfettiPosition({ x: pageX, y: pageY });
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 2000);
@@ -335,7 +338,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   statLabel: {
-    fontSize: SIZES.sm,
+    fontSize: SIZES.md,
     marginTop: SIZES.xs,
   },
   content: {

@@ -9,6 +9,7 @@ import HomeScreen from '../screens/HomeScreen';
 import HabitsScreen from '../screens/HabitsScreen';
 import StatsScreen from '../screens/StatsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import AIAssistantScreen from '../screens/AIAssistantScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -26,6 +27,9 @@ const TabNavigator = () => {
               break;
             case 'Habits':
               iconName = focused ? 'list' : 'list-outline';
+              break;
+            case 'AI Assistant':
+              iconName = focused ? 'sparkles' : 'sparkles-outline';
               break;
             case 'Stats':
               iconName = focused ? 'stats-chart' : 'stats-chart-outline';
@@ -54,6 +58,13 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Habits" component={HabitsScreen} />
+      <Tab.Screen 
+        name="AI Assistant" 
+        component={AIAssistantScreen}
+        options={{
+          tabBarLabel: 'AI',
+        }}
+      />
       <Tab.Screen name="Stats" component={StatsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
