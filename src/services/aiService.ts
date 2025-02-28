@@ -3,7 +3,7 @@ import { Task } from '../types/task';
 import { Habit } from '../types/habit';
 
 const openai = new OpenAI({
-  apiKey: "sk-proj-0123456789abcdef0123456789abcdef",
+  apiKey: "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",
   dangerouslyAllowBrowser: true
 });
 
@@ -37,7 +37,7 @@ export class AIService {
 
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o-mini",
         messages: [{ role: "user", content: prompt }],
       });
 
@@ -63,7 +63,7 @@ export class AIService {
 
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o-mini",
         messages: [{ role: "user", content: prompt }],
       });
 
@@ -94,7 +94,7 @@ export class AIService {
 
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o-mini",
         messages: [{ role: "user", content: prompt }],
       });
 
@@ -127,7 +127,7 @@ export class AIService {
 
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o-mini",
         messages: [{ role: "user", content: prompt }],
       });
 
